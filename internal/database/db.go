@@ -9,7 +9,7 @@ import (
 	_ "github.com/lib/pq"
 	"fmt"
 )
-
+// Global variable holding the database connection pool
 var DB *sql.DB
 
 func Connect(){
