@@ -1,4 +1,4 @@
-// connecting database import package database first
+// import package database
 package database
 
 import (
@@ -17,6 +17,7 @@ func Connect(){
 	if connStr == "" {
 		log.Fatal("DB_URL environment variable not set")
 	}
+	// now open the database
 	var err error
 	DB, err = sql.Open("postgres", connStr)
 	if err != nil{
