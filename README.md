@@ -37,7 +37,8 @@ git clone https://github.com/MoyosoreCoder/go-ecommerce-api.git
 ```
 4. Set up the project
 - go mod init (your-github-project-link)
-5. Then rwqqq2q 4rxffyu4aasxccwun this command in the terminal
+5. Then run the command in the terminal
 ```bash
 go run main.go
 ```
+- NOTE: ALWAYS USE THE ENV EXAMPLE FILE LOCATED IN THE ROOT OF THIS PROJECT TO SET UP YOUR .ENV FILE CREDENTIALS
