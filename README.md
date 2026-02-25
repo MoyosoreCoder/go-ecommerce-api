@@ -41,3 +41,4 @@ git clone https://github.com/MoyosoreCoder/go-ecommerce-api.git
 ```bash
 go run main.go
 ```
+- NOTE: ALWAYS USE THE ENV EXAMPLE FILE LOCATED IN THE ROOT OF THIS PROJECT TO SET UP YOUR .ENV FILE CREDENTIALS
