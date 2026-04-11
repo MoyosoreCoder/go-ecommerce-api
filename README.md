@@ -9,7 +9,7 @@ RESTFUL backend API implementation for an e-commerce  web application built with
 - Product:
 - Add products (admin-only)
 - List all products
-- Optional if there is time for me: view, update, delete products
+- Optional if there is time for me: i will add view, update, delete products
 - PostgreSQL database for persistent storage
 - RESTful API endpoints using Gorilla
 
@@ -41,3 +41,4 @@ git clone https://github.com/MoyosoreCoder/go-ecommerce-api.git
 ```bash
 go run main.go
 ```
+- NOTE: ALWAYS USE THE ENV EXAMPLE FILE LOCATED IN THE ROOT OF THIS PROJECT TO SET UP YOUR .ENV FILE CREDENTIALS
