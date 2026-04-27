@@ -8,18 +8,7 @@ import (
 	"github.com/MoyosoreCoder/go-ecommerce-api/internal/registration"
 )
 
-type RegisterRequest struct {
-	Username string `json:"username"`
-	Email string `json:"email"`
-	Password string `json:"password"`
-}
-type SuccessResponse struct {
-	Message string `json:"message" example:"User registered successfully"`
-}
 
-type ErrorResponse struct {
-	Error string `json:"error" example:"User already exists"`
-}
 // RegisterUser godoc
 // @Summary Register a new user
 // @Description Creates a new user and hashes the password
@@ -32,19 +21,32 @@ type ErrorResponse struct {
 //@Failure 409 {object} ErrorResponse
 // @Router /register [post]
 
+type RegisterRequest struct {
+	Username string `json:"username"`
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
 
-func RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
-	
+type SuccessResponse struct {
+	Message string `json:"message" example:"User registered successfully"`
+}
+
+type ErrorResponse struct {
+	Error string `json:"error" example:"User already exists"`
+}
+
+func RegisterUserHandler (w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost{
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+
 	var req RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		w.Header().Set("Content-Type",  "application/json")
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(ErrorResponse{Error: "Invalid request"})
+		json.NewEncoder(w).Encode(ErrorResponse{Error: "Invalid request body"})
 		return
 	}
 	if err := registration.RegisterUser(req.Username, req.Email, req.Password); err != nil {
@@ -53,11 +55,11 @@ func RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(ErrorResponse{Error: err.Error()})
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(SuccessResponse{Message: "User registered successfully"})
 }
+
 	
 //  Struct for login
 type LoginRequest struct {
