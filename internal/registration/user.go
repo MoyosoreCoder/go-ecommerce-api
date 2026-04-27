@@ -9,10 +9,10 @@ import (
 func RegisterUser(username, email, password string) error {
 	if username == "" || email == "" || password == "" {
 		return errors.New("all fields are required")
-	}
+	} 
 	//hash password
 	hashedPassword, err := bcrypt.GenerateFromPassword(
-		[]byte(password),
+		[]byte(password), 
 		bcrypt.DefaultCost,
 	)
 	if err != nil {
@@ -25,7 +25,7 @@ func RegisterUser(username, email, password string) error {
 		username,
 		email,
 		string(hashedPassword),
-	)
+	) 
 	if err != nil {
 		return err
 	}
@@ -60,6 +60,5 @@ func LoginUser(email, password string) error {
 	if err != nil {
 		return errors.New("invalid email or password")
 	}
-
 	return nil
 }
