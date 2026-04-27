@@ -30,7 +30,7 @@ go-ecommerce-api/
 
 ## Getting started
 1. Install Go: https://golang.org/dl/
-2. Install PostgreSQL: https://www.postgresql.org/download/  NOTE: enable the pgAdmin during installation
+2. Install PostgreSQL: https://www.postgresql.org/download/
 3. Clone this repository:
 ```bash
 git clone https://github.com/MoyosoreCoder/go-ecommerce-api.git
@@ -39,6 +39,6 @@ git clone https://github.com/MoyosoreCoder/go-ecommerce-api.git
 - go mod init (your-github-project-link)
 5. Then run the command in the terminal
 ```bash
-go run main.go
+go run cmd/main.go
 ```
 - NOTE: ALWAYS USE THE ENV EXAMPLE FILE LOCATED IN THE ROOT OF THIS PROJECT TO SET UP YOUR .ENV FILE CREDENTIALS
