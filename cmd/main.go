@@ -7,12 +7,14 @@ package main
 import (
 	"net/http"
 	"log" 
+	"github.com/MoyosoreCoder/go-ecommerce-api/internal/database"
 	"github.com/MoyosoreCoder/go-ecommerce-api/internal/handler"
 	_ "github.com/MoyosoreCoder/go-ecommerce-api/docs"
 	httpSwagger "github.com/swaggo/http-swagger" 
 )
 
 func main(){
+	database.Connect()
 	// Register route
 	http.HandleFunc("/register", handler.RegisterUserHandler)
 	//login route
@@ -24,7 +26,6 @@ func main(){
 	log.Println("Server running on port 8080...")
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
-		log.Fatal(err)
+ 		log.Fatal(err)
 	}
-
 }
