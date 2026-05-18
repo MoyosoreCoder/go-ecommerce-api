@@ -36,7 +36,7 @@ go-ecommerce-api/
 git clone https://github.com/MoyosoreCoder/go-ecommerce-api.git
 ```
 4. Set up the project
-- go mod init (your-github-project-link)
+- go mod init github.com/MoyosoreCoder/go-ecommerce-api
 5. Then run the command in the terminal
 ```bash
 go run cmd/main.go
