@@ -5,27 +5,37 @@
 // @BasePath /
 package main
 import (
+	"github.com/gorilla/mux"
 	"net/http"
 	"log" 
-	"github.com/MoyosoreCoder/go-ecommerce-api/internal/database"
-	"github.com/MoyosoreCoder/go-ecommerce-api/internal/handler"
+	"github.com/joho/godotenv"
+	"github.com/MoyosoreCoder/go-ecommerce-api/middleware"
+	"github.com/MoyosoreCoder/go-ecommerce-api/database"
+	"github.com/MoyosoreCoder/go-ecommerce-api/handlers"
 	_ "github.com/MoyosoreCoder/go-ecommerce-api/docs"
-	httpSwagger "github.com/swaggo/http-swagger" 
+	// httpSwagger "github.com/swaggo/http-swagger" 
 )
 
-func main(){
-	database.Connect()
-	// Register route
-	http.HandleFunc("/register", handler.RegisterUserHandler)
-	//login route
-	http.HandleFunc("/login", handler.LoginUserHandler)
-	// Swagger route
-	http.Handle("/swagger/", httpSwagger.WrapHandler)
+func main() {
+        err := godotenv.Load()
+        if err != nil {
+                log.Println(".env not found")
+        }
+        database.ConnectDatabase()
+        defer database.DB.Close()
 
-	// Start server
-	log.Println("Server running on port 8080...")
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
- 		log.Fatal(err)
-	}
+        r := mux.NewRouter()
+
+        r.HandleFunc("/register", handlers.RegisterUserHandler)
+        r.HandleFunc("/login", handlers.LoginHandler)
+
+
+        r.Handle(
+        "/profile",
+        middleware.AuthMiddleware(http.HandlerFunc(handlers.ProfileHandler)),
+)
+
+        log.Println("Server running on :8080")
+        log.Fatal(http.ListenAndServe(":8080", r))
 }
+	
