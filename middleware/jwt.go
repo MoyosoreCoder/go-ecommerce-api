@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"httpserver/utils"
+	"github.com/MoyosoreCoder/go-ecommerce-api/utils"
+    
 	"github.com/golang-jwt/jwt/v5"
 )
 
