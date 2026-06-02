@@ -1,40 +1,61 @@
 package handlers
 
 import (
-        "encoding/json"
-        
-        "log"
-        "net/http"
-		"github.com/MoyosoreCoder/go-ecommerce-api/models"
-        "github.com/MoyosoreCoder/go-ecommerce-api/utils"
+	"encoding/json"
 
-        "golang.org/x/crypto/bcrypt"
-        "github.com/MoyosoreCoder/go-ecommerce-api/database"
+	"log"
+	"net/http"
+
+	"github.com/MoyosoreCoder/go-ecommerce-api/models"
+	"github.com/MoyosoreCoder/go-ecommerce-api/utils"
+
+	"github.com/MoyosoreCoder/go-ecommerce-api/database"
+	"golang.org/x/crypto/bcrypt"
 )
-//var db = &database.DB
 
+type Response struct {
+    Message string      `json:"message,omitempty"`
+    Error   string      `json:"error,omitempty"`
+    Data    interface{} `json:"data,omitempty"`
+}
 
 func RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
         var userModel models.RegisterUser
         //if all fields are correct, register to database
         if r.Method != http.MethodPost {
-                http.Error(w, "request method not acceptable", http.StatusMethodNotAllowed)
+                w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusMethodNotAllowed)
+                json.NewEncoder(w).Encode(Response{
+                        Error: "method not allowed",
+                })
                 return
         }
 
         //decode  the body request
         err := json.NewDecoder(r.Body).Decode(&userModel)
         if err!= nil {
-                http.Error(w, "Invalid request body", http.StatusBadRequest)
+                w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusBadRequest)
+                json.NewEncoder(w).Encode(Response{
+                        Error: "invalid request body",
+                })
                 return
         }
         if userModel.Username == "" || userModel.Email == "" ||userModel.Password == "" {
-                http.Error(w, "missing field", http.StatusBadRequest)
+                w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusBadRequest)
+                json.NewEncoder(w).Encode(Response{
+                        Error: "all fields are required",
+                })
                 return
         }
         hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userModel.Password), bcrypt.DefaultCost)
         if err != nil {
-                http.Error(w, "Error generating hashed password",  http.StatusInternalServerError)
+                w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusInternalServerError)
+                json.NewEncoder(w).Encode(Response{
+                        Error: "error hashing password",
+                })
                 return
         }
         userModel.Password = string(hashedPassword)
@@ -47,28 +68,35 @@ func RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
         )
         if err != nil {
                 log.Printf("Error: %v", err)
-                http.Error(w, "Error saving to database", http.StatusInternalServerError)
+                w.Header().Set("Content-Type", "application/json")
+                 w.WriteHeader(http.StatusInternalServerError)
+                 json.NewEncoder(w).Encode(Response{
+                        Error: "error creating user",
+                })
                 return
         }
         w.Header().Set("Content-Type", "application/json")
         w.WriteHeader(http.StatusCreated)
-        json.NewEncoder(w).Encode(map[string]string{"message": "user registered successfully"})
+        json.NewEncoder(w).Encode(Response{
+                Message: "user created successfully",
+                Data:   map[string] string {
+                        "email": userModel.Email, 
+                        "username": userModel.Username,
+                },
+        })
+}
 
-}
-//Login Response struct
-type LoginResponse struct {
-        Message string `json:"message"`
-        Token   string `json:"token"`
-}
 
 //Login handler
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
     if r.Method != http.MethodPost {
-        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-        return
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusMethodNotAllowed)
+        json.NewEncoder(w).Encode(Response{
+                Error: "method not allowed",
+        })
     }
-
-        var requestBody models.LoginUser
+    var requestBody models.LoginUser
     err := json.NewDecoder(r.Body).Decode(&requestBody);
         if err != nil {
         http.Error(w, err.Error(), http.StatusBadRequest)
@@ -84,34 +112,49 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
         query := "SELECT id, email, password FROM users WHERE email = $1"
         err = database.DB.QueryRow(query, requestBody.Email).Scan(&userID, &email, &hashedPassword)
-
-    if err != nil {
-                http.Error(w, "Invalid credentials", http.StatusUnauthorized);
+        if err != nil {
+                w.Header().Set("Content-Type", "application/json")
+                 w.WriteHeader(http.StatusNotFound)
+                json.NewEncoder(w).Encode(Response{
+                        Error: "invalid credentials",
+                })
                 return
         }
         // 2. Compare password
         err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(requestBody.Password))
         if err != nil {
-                http.Error(w, "Invalid credentials", http.StatusUnauthorized)
-                return
+                w.Header().Set("Content-Type", "application/json")
+                w.WriteHeader(http.StatusUnauthorized)
+                json.NewEncoder(w).Encode(Response{
+                        Error: "invalid credentials",
+                })
         }
         // 3. Generate JWT
         token, err := utils.GenerateJWT(userID, email)
         if err != nil {
-                http.Error(w, "Could not generate token", http.StatusInternalServerError)
+               w.Header().Set("Content-Type", "application/json")
+               w.WriteHeader(http.StatusInternalServerError)
+               json.NewEncoder(w).Encode(Response{
+                        Error: "error generating token",
+                })
                 return
         }
 
-        //login response message
-        response := LoginResponse{
-                Message: "Login successful",
-                Token: token,
-
-        }
+       
         w.Header().Set("Content-Type", "application/json")
         w.WriteHeader(http.StatusOK)
-        json.NewEncoder(w).Encode(response)
+        json.NewEncoder(w).Encode(Response{
+                Message: "login successful",
+                Data: map[string] interface{}{
+                        "token": token,
+                        "email": email,
+                        "id": userID,
+                        
+                },
+        })
 }
+
+
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
         userID := r.Context().Value("userID")
@@ -119,8 +162,10 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
         w.Header().Set("Content-Type", "application/json")
 
-        json.NewEncoder(w).Encode(map[string]interface{}{
-                "user_id": userID,
-                "email":   email,
+        json.NewEncoder(w).Encode(Response{
+                Data: map[string]interface{}{
+                        "id": userID,
+                        "email": email,
+                },
         })
 }
