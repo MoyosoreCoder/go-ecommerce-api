@@ -23,6 +23,7 @@ func RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
         var userModel models.RegisterUser
         //if all fields are correct, register to database
         if r.Method != http.MethodPost {
+                
                 w.Header().Set("Content-Type", "application/json")
                 w.WriteHeader(http.StatusMethodNotAllowed)
                 json.NewEncoder(w).Encode(Response{
@@ -41,11 +42,22 @@ func RegisterUserHandler(w http.ResponseWriter, r *http.Request) {
                 })
                 return
         }
-        if userModel.Username == "" || userModel.Email == "" ||userModel.Password == "" {
+        var missingFields []string
+        if userModel.Username == "" {
+                missingFields = append(missingFields, "username")
+        }
+        if userModel.Email == "" {
+                missingFields = append(missingFields, "email")
+        }
+        if userModel.Password == "" {
+                missingFields = append(missingFields, "password")
+        }
+        if len(missingFields) > 0 {
                 w.Header().Set("Content-Type", "application/json")
                 w.WriteHeader(http.StatusBadRequest)
                 json.NewEncoder(w).Encode(Response{
-                        Error: "all fields are required",
+                        Error: "missing required fields",
+                        Data:  missingFields,
                 })
                 return
         }
