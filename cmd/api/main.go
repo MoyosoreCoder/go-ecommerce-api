@@ -12,7 +12,12 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	database.ConnectDB()
+	pool, err := database.ConnectDB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer pool.Close()
+	
 	http.HandleFunc("/", homeHandler)
 	fmt.Println("Server is running at http://localhost:8080")
 
