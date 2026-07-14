@@ -1,45 +1,43 @@
 package database
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
-
+	"context"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 )
 
-func ConnectDB() {
-	// 1. loading environment variables
+func ConnectDB() (*pgxpool.Pool, error) {
+	// 1. The first thing we need to do is load our environment variables
 	err := godotenv.Load()
-
 	if err != nil {
 		log.Fatal("Error loading .env file or missing")
 	}
-
-	// 2. for parsing connection string config in docs
+	
+	// 2. We need the config from the official docs
 	config, err := pgxpool.ParseConfig(os.Getenv("DATABASE_URL"))
 	if err != nil {
-		fmt.Println("Unable to Parse connection string Config")
-		log.Fatal(err) 	 		
+		fmt.Println("Unable to parse configuration string")
+		log.Fatal(err)
 	}
-	// 3. creates new pool with the given config
+
+	//3. config after connect
+	config.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
+    // do something with every new connection--set time zone
+	_, err = conn.Exec(ctx, "set timezone to 'UTC';")
+	return err
+	}
+	
+	// 4. Now we can create the pool
+	
 	pool, err := pgxpool.NewWithConfig(context.Background(), config)
 	if err != nil {
-		fmt.Println("Unable to establish a new database connection config pool")
+		fmt.Println("Unable to create connection pool")
 		log.Fatal(err)
 	}
-	// 4. use pool here to close every connection for safety
-	defer pool.Close()
-
-	// 5. ping() checks if the database is reachable and returns an error if not
-	err = pool.Ping(context.Background())
-	if err != nil {
-		fmt.Println("Unable to ping the Database")
-		log.Fatal(err)
-	}
-
-	// 6. successful connection message
-	fmt.Println("Successfully Connected to the Database")
+	fmt.Println("Successfully connected to the database")
+	return pool, nil	
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"log"
+	"github.com/MoyosoreCoder/go-ecommerce-api/internal/database"
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -11,6 +12,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	database.ConnectDB()
 	http.HandleFunc("/", homeHandler)
 	fmt.Println("Server is running at http://localhost:8080")
 
