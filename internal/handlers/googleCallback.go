@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"github.com/MoyosoreCoder/go-ecommerce-api/internal/services"
 
@@ -14,10 +15,11 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	//tok, err := conf.Exchange(r.Context(), code)
 	tok, err := conf.Exchange(r.Context(), code)
 	if err != nil {
-		http.Error(w, "Failed to exchange code", http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	_ = tok
+
+	fmt.Fprintln(w, "Google login successful!")
 
 }
