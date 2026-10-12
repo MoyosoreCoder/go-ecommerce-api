@@ -5,7 +5,7 @@ RESTFUL backend API implementation for an e-commerce  web application built with
 
 ## Features
 - User authentication:
-- Login user with jwt authentication
+- Login with google and user login with jwt authentication
 - Product:
 - Add products (admin-only)
 - List all products
