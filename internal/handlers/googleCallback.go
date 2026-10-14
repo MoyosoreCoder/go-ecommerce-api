@@ -21,5 +21,6 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	_ = tok
 
 	fmt.Fprintln(w, "Google login successful!")
+	// then save the token in database
 
 }
