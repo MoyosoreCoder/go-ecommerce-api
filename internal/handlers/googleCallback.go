@@ -21,4 +21,6 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintln(w, "Google login successful!")
 
+	conf.Client(r.Context(), tok)
+
 }
