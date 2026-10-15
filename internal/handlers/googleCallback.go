@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"github.com/MoyosoreCoder/go-ecommerce-api/internal/services"
-
 )
 func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	conf := services.GetOauthConfig()

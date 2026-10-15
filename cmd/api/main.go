@@ -22,8 +22,8 @@ func main() {
 		log.Fatal(err)
 	}
 	defer pool.Close()
-	
-	
+
+	http.HandleFunc("/", homeHandler)
 	fmt.Println("Server is running at http://localhost:8080")
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
