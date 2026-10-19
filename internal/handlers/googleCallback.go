@@ -26,7 +26,6 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	
 	_ = client
 
- 
 
 	//user's profile
 	resp, err := client.Get("https://openidconnect.googleapis.com/v1/userinfo")
