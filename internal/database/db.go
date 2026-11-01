@@ -14,7 +14,7 @@ func ConnectDB() (*pgxpool.Pool, error) {
 	if err != nil {
 		return nil, err
 	}
-
+ 
 	fmt.Println("Database connected successfully")
 	return pool, nil
 }
