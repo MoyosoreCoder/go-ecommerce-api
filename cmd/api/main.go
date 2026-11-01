@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"log"
+	"net/http"
+
 	"github.com/MoyosoreCoder/go-ecommerce-api/internal/database"
 	"github.com/MoyosoreCoder/go-ecommerce-api/internal/handlers"
+	"github.com/joho/godotenv"
 )
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -13,6 +15,12 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// load env variables for database connection
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/auth/google", handlers.GoogleLoginHandler)
 	http.HandleFunc("/auth/google/callback", handlers.GoogleCallbackHandler)
@@ -23,7 +31,6 @@ func main() {
 	}
 	defer pool.Close()
 
-	http.HandleFunc("/", homeHandler)
 	fmt.Println("Server is running at http://localhost:8080")
 
 	if err := http.ListenAndServe(":8080", nil); err != nil {
