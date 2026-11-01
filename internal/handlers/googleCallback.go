@@ -40,14 +40,14 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	var user models.GoogleUser
 
-	err = json.NewDecoder(r.Body).Decode(&user)
+	err = json.NewDecoder(resp.Body).Decode(&user)
 
 	if err != nil {
 		http.Error(w, "Failed to decode profile", http.StatusInternalServerError)
 		return
 	}
+	
 	fmt.Println("Google ID:", user.ID)
 	fmt.Println("Google Name:", user.Name)
 	fmt.Println("Google Email:", user.Email)
-
 }
