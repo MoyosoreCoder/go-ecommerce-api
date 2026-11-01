@@ -9,7 +9,7 @@ func GetOauthConfig() *oauth2.Config {
 	conf := &oauth2.Config{
 		//client id is the application's ID
 		ClientID:     os.Getenv("CLIENT_ID"),
-		ClientSecret: os.Getenv("CLIENT_S ECRET"),
+		ClientSecret: os.Getenv("CLIENT_SECRET"),
 		RedirectURL: os.Getenv("CLIENT_REDIRECT"),
 		Scopes: []string{"openid", "email", "profile"},
 		Endpoint: google.Endpoint,
